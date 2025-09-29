@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YOLO Object Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Object Recognition Platform</h1>
+        <p>Upload any image for immediate analysis. Our high-performance model provides accurate detection and localization of over 80 common object classes.</p>
+        <p style="font-size: 0.9em; color: #9ca3af; margin-top: -15px;">Accepted formats: PNG, JPG, JPEG, GIF, WebP, BMP, TIFF</p> 
+
+        <form method="POST" enctype="multipart/form-data">
+            
+            <label for="file-upload" class="custom-file-upload">
+                Choose Image File
+            </label>
+            <input id="file-upload" type="file" name="file" accept="image/png, image/jpeg, image/gif" required onchange="updateFileName(this)">
+            
+            <span id="file-name-display">No file selected</span>
+            <br>
+            
+            <input type="submit" value="Analyze Image">
+        </form>
+    </div>
+
+    <script>
+        // JavaScript to show the selected file name
+        function updateFileName(input) {
+            const fileNameDisplay = document.getElementById('file-name-display');
+            if (input.files && input.files.length > 0) {
+                fileNameDisplay.textContent = 'Selected: ' + input.files[0].name;
+            } else {
+                fileNameDisplay.textContent = 'No file selected';
+            }
+        }
+    </script>
+</body>
+</html>

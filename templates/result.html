@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Detection Complete!</h1>
+        <p>Your image has been analyzed. Detected objects are marked with bounding boxes.</p>
+
+        {% if object_counts %}
+        <div class="stats-box">
+            <h2>Summary of Detected Objects (Avg. Confidence)</h2> 
+            
+           {% for name, stats in object_counts.items() %}
+           <div class="stat-item">
+               <span class="stat-name">{{ name }} ({{ stats.count }})</span>
+               <span class="stat-count">{{ stats.avg_conf }}</span>
+           </div>
+           {% endfor %}
+            
+        </div>
+        {% else %}
+        <div class="stats-box">
+            <h2>Summary</h2>
+            <p>No objects were detected in the image with the current confidence threshold.</p>
+        </div>
+        {% endif %} <div class="image-box" id="image-container">
+            <h2>Detected Image</h2>
+            <img id="result-image" src="{{ url_for('show_result', predict_folder=predict_folder, filename=filename) }}" alt="Detected Image">
+        </div>
+
+        <script id="detection-data" type="application/json">
+            {{ detection_details_json|tojson }}
+        </script>
+        
+        <a href="{{ url_for('upload_file') }}" class="back-link">Analyze Another Image</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const image = document.getElementById('result-image');
+            const container = document.getElementById('image-container');
+            const dataElement = document.getElementById('detection-data');
+            
+            // Get the detection data parsed as a JS object
+            const detections = JSON.parse(dataElement.textContent);
+
+            // Wait until the image is fully loaded to get correct dimensions
+            image.onload = () => {
+                const imageWidth = image.offsetWidth;
+                const imageHeight = image.offsetHeight;
+
+                detections.forEach(detection => {
+                    // Extract normalized (0 to 1) coordinates
+                    const x_center = detection.x_center;
+                    const y_center = detection.y_center;
+                    const width_norm = detection.width;
+                    const height_norm = detection.height;
+
+                    // Calculate actual pixel values for the box
+                    const box_width = width_norm * imageWidth;
+                    const box_height = height_norm * imageHeight;
+                    
+                    // Calculate top-left corner coordinates (needed for absolute positioning)
+                    const x_min = (x_center * imageWidth) - (box_width / 2);
+                    const y_min = (y_center * imageHeight) - (box_height / 2);
+
+                    // Create the bounding box div
+                    const box = document.createElement('div');
+                    box.className = 'bounding-box';
+                    box.style.left = `${x_min}px`;
+                    box.style.top = `${y_min}px`;
+                    box.style.width = `${box_width}px`;
+                    box.style.height = `${box_height}px`;
+
+                    // Create the label
+                    const label = document.createElement('div');
+                    label.className = 'box-label';
+                    label.textContent = `${detection.label} (${detection.confidence})`;
+
+                    // Append label to box, and box to container
+                    box.appendChild(label);
+                    container.appendChild(box);
+                });
+            };
+
+            // Handle cases where the image is already loaded (browser cache)
+            if (image.complete) {
+                image.onload();
+            }
+        });
+    </script>
+</body>
+</html>
