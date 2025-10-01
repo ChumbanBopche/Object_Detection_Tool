@@ -1,0 +1,3 @@
+Flask
+ultralytics
+# The 'ultralytics' package will handle all its own dependencies (like PyTorch)
