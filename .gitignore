@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
+.DS_Store
+
+# YOLO/Ultralytics specific outputs
+runs/
+uploads/
+yolov8n.pt # Or whatever model file you use if you download it locally
+
+# Vercel-specific files (optional, but good practice)
+.vercel/
