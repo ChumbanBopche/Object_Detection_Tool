@@ -1,3 +1,9 @@
-Flask
+# requirements.txt
+flask
+gunicorn # For Vercel deployment
+# Attempt to install only what's absolutely required:
+# This might be tricky and requires trial and error.
+# ultralytics might have to be in here, but you can try to skip the CV2 dependency
 ultralytics
-# The 'ultralytics' package will handle all its own dependencies (like PyTorch)
+# opencv-python-headless might be smaller if you need video functionality
+# You must check Vercel's supported Python runtimes for compatibility
